@@ -10,6 +10,7 @@ var chaiHttp = require('chai-http');
 var chai = require('chai');
 var assert = chai.assert;
 var server = require('../server');
+var ObjectId = require('mongodb').ObjectID;
 
 chai.use(chaiHttp);
 
@@ -29,8 +30,6 @@ suite('Functional Tests', function() {
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
-          
-          //fill me in too!
           Object.values(res.body[0]).forEach(e=>assert.isNotNull(e))
           done();
         });
@@ -148,6 +147,7 @@ suite('Functional Tests', function() {
           assert.property(res.body[0], '_id');
           done();
       });
+    });
       
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
         chai.request(server)
@@ -168,33 +168,34 @@ suite('Functional Tests', function() {
           assert.property(res.body[0], '_id');
           done();
       });
+      });
       
     });
     
     suite('DELETE /api/issues/{project} => text', function() {
       
       test('No _id', function(done) {
-         chai.request(server)
-          .delete('/api/issues/test')
-          .send({_id:''})
-          .end(function(err, res){
-            assert.equal(res.status, 200);
-            assert.equal(res.text,'_id error')
-            done();
-        });
+        chai.request(server)
+        .delete('/api/issues/test')
+        .send({_id:''})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text,'_id error')
+          done();
+      });
       });
       
       test('Valid _id', function(done) {
-         chai.request(server)
-            .delete('/api/issues/test')
-            .send({_id:ObjectId('5b8aa2a8ad51a701ef8b4441')})
-            // change the _id here and in the assert.equal function for each test 
-            // since it deletes it
-            .end(function(err, res){
-              assert.equal(res.status, 200);
-              assert.equal(res.text, 'deleted 5b8aa2a8ad51a701ef8b4441')
-              done();
-          });
+        chai.request(server)
+        .delete('/api/issues/test')
+        .send({_id:ObjectId('5b8aa2a8ad51a701ef8b4441')})
+        // change the _id here and in the assert.equal function for each test 
+        // since it deletes it
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'deleted 5b8aa2a8ad51a701ef8b4441')
+          done();
+      });
       });
       
     });
